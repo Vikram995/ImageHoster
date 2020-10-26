@@ -45,4 +45,28 @@ public class CommentRepository {
         return newComment;
     }
 
+    //The method receives the Image object to be persisted in the database
+    //Creates an instance of EntityManager
+    //Starts a transaction
+    //The transaction is committed if it is successful
+    //The transaction is rolled back in case of unsuccessful transaction
+    public void deleteComments(Integer imageId) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+
+        List<Comment> allComments = getAllComments(imageId);
+        for (Comment eachComment : allComments) {
+            try {
+                transaction.begin();
+                Comment comment = em.find(Comment.class, eachComment.getId());
+                em.remove(comment);
+                transaction.commit();
+            } catch (Exception e) {
+                transaction.rollback();
+            }
+
+        }
+
+    }
+
 }
